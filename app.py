@@ -4,7 +4,7 @@ import pandas as pd
 # Load dataset
 def load_data():
     try:
-        return pd.read_csv('data/simple_netflix.csv')
+        return pd.read_csv(r'data/simple_netflix.csv')
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
         return pd.DataFrame()
