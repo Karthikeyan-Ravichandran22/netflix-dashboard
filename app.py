@@ -10,17 +10,18 @@ st.set_page_config(
     layout="wide",
 )
 
-# Load Dataset via file uploader
+# Load dataset via file uploader (outside the cached function)
+uploaded_file = st.sidebar.file_uploader("Upload your Netflix CSV file", type=["csv"])
+
 @st.cache_data
-def load_data_via_uploader():
-    uploaded_file = st.sidebar.file_uploader("Upload your Netflix CSV file", type=["csv"])
-    if uploaded_file is not None:
-        return pd.read_csv(uploaded_file)
-    else:
-        return pd.DataFrame()
+def load_data(file):
+    return pd.read_csv(file)
 
 # Load Data
-df = load_data_via_uploader()
+if uploaded_file is not None:
+    df = load_data(uploaded_file)
+else:
+    df = pd.DataFrame()
 
 # Dashboard Layout
 st.title("📺 Netflix Dashboard")
@@ -83,33 +84,5 @@ if not df.empty:
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.barplot(x=ratings_data.index, y=ratings_data.values, ax=ax)
     ax.set_xlabel("Ratings")
-    ax.set_ylabel("Count")
-    ax.set_title("Ratings Distribution on Netflix")
-    st.pyplot(fig)
-
-    st.write("### Dataset by Ratings")
-    selected_rating = st.multiselect("Select Rating(s)", ratings_data.index)
-    if selected_rating:
-        filtered_df = df[df['rating'].isin(selected_rating)]
-        st.write(filtered_df)
-
-    # Timeline Section
-    st.subheader("🗓️ Release Timeline Analysis")
-    df['release_year'] = pd.to_datetime(df['release_year'], format='%Y', errors='coerce')
-    release_timeline = df['release_year'].dt.year.value_counts().sort_index()
-
-    st.write("### Release Timeline Distribution")
-    fig, ax = plt.subplots(figsize=(10, 5))
-    sns.lineplot(x=release_timeline.index, y=release_timeline.values, ax=ax, marker='o')
-    ax.set_xlabel("Release Year")
-    ax.set_ylabel("Count")
-    ax.set_title("Release Timeline on Netflix")
-    st.pyplot(fig)
-
-    st.write("### Dataset by Release Year")
-    min_year, max_year = int(df['release_year'].dt.year.min()), int(df['release_year'].dt.year.max())
-    selected_year_range = st.slider("Select Year Range", min_year, max_year, (min_year, max_year))
-    filtered_df = df[(df['release_year'].dt.year >= selected_year_range[0]) & (df['release_year'].dt.year <= selected_year_range[1])]
-    st.write(filtered_df)
-else:
-    st.warning("Please upload a valid CSV file to get started.")
+    ax set_ylabel("Count")
+    ax set Title
